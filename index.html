@@ -1,41 +1,110 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <title>3D Viewer</title>
+<head>
+  <meta charset="utf-8" />
+  <title>3D Viewer</title>
 
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        background: #bfc0c2;
-      }
-      model-viewer {
-        width: 100vw;
-        height: 100vh;
-        touch-action: pinch-zoom;
-      }
-    </style>
-  </head>
-  <body>
-    <model-viewer
-      src="PhaseOrbit.glb"
-      alt="3D Model"
-      camera-controls
-      auto-rotate
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #a7b3b9;
+    }
 
-      exposure="1.0"
-      shadow-intensity="0.0"
-      autoplay       
-      animation-loop 
+    model-viewer {
+      width: 100vw;
+      height: 100vh;
+      touch-action: pinch-zoom;
+    }
 
-      environment-image="neutral"
+    /* 左上・最小UI */
+    .env-ui {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      gap: 6px;
+      z-index: 10;
+    }
 
-      disable-zoom="false"
-      ar
-    ></model-viewer>
-  </body>
+    .env-ui button {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* White */
+    .btn-white {
+      background: white;
+      color: black;
+    }
+
+    /* Black */
+    .btn-black {
+      background: black;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+<model-viewer
+  id="viewer"
+  src="PhaseOrbit.glb"
+  alt="3D Model"
+  camera-controls
+  auto-rotate
+  exposure="1.0"
+  shadow-intensity="0.0"
+  autoplay
+  animation-loop
+  environment-image="neutral"
+  disable-zoom="false"
+  ar>
+</model-viewer>
+
+
+  <div class="env-ui">
+    <button class="btn-white" data-env="white">White</button>
+    <button class="btn-black" data-env="black">Black</button>
+  </div>
+
+  <script>
+  const viewer = document.getElementById('viewer');
+
+  const ENV_PRESETS = {
+    white: {
+      env: 'neutral',
+      exposure: 1.0,
+      shadow: 0.0,
+      bg: '#a7b3b9'
+    },
+    black: {
+      env: 'warehouse',
+      exposure: 1.2,
+      shadow: 0.3,
+      bg: '#111111'
+    }
+  };
+
+  document.querySelectorAll('.env-ui button').forEach(button => {
+    button.addEventListener('click', () => {
+      const preset = ENV_PRESETS[button.dataset.env];
+      if (!preset) return;
+
+      viewer.environmentImage = preset.env;
+      viewer.exposure = preset.exposure;
+      viewer.shadowIntensity = preset.shadow;
+      document.body.style.background = preset.bg;
+    });
+  });
+</script>
+
+
+</body>
 </html>
